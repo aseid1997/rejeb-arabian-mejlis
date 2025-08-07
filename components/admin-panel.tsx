@@ -18,7 +18,7 @@ import { toast } from "@/hooks/use-toast"
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-const supabase = supabaseUrl && supabaseKey 
+const supabase = supabaseUrl && supabaseKey
   ? createClient(supabaseUrl, supabaseKey)
   : null
 
@@ -119,7 +119,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
         .from('products')
         .select('*')
         .order('created_at', { ascending: false })
-      
+
       if (error) throw error
       setProducts(data || [])
     } catch (error) {
@@ -161,7 +161,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
         .from('contacts')
         .select('*')
         .order('created_at', { ascending: false })
-      
+
       if (error) throw error
       setContacts(data || [])
     } catch (error) {
@@ -195,7 +195,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
         .from('orders')
         .select('*')
         .order('created_at', { ascending: false })
-      
+
       if (error) throw error
       setOrders(data || [])
     } catch (error) {
@@ -205,7 +205,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-  
+
     if (!isSupabaseConfigured || !supabase) {
       toast({
         title: "Demo Mode",
@@ -214,16 +214,16 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
       })
       return
     }
-  
+
     try {
       if (editingProduct) {
         const { error } = await supabase
           .from('products')
           .update(productForm)
           .eq('id', editingProduct.id)
-      
+
         if (error) throw error
-      
+
         toast({
           title: "Product Updated",
           description: "Product has been updated successfully.",
@@ -232,15 +232,15 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
         const { error } = await supabase
           .from('products')
           .insert([productForm])
-        
+
         if (error) throw error
-        
+
         toast({
           title: "Product Added",
           description: "New product has been added successfully.",
         })
       }
-    
+
       setShowProductDialog(false)
       setEditingProduct(null)
       setProductForm({
@@ -274,20 +274,20 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
     }
 
     if (!confirm('Are you sure you want to delete this product?')) return
-  
+
     try {
       const { error } = await supabase
         .from('products')
         .delete()
         .eq('id', id)
-    
+
       if (error) throw error
-    
+
       toast({
         title: "Product Deleted",
         description: "Product has been deleted successfully.",
       })
-    
+
       fetchProducts()
     } catch (error) {
       toast({
@@ -319,14 +319,14 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
         .from('orders')
         .update({ status })
         .eq('id', orderId)
-    
+
       if (error) throw error
-    
+
       toast({
         title: "Order Updated",
         description: "Order status has been updated.",
       })
-    
+
       fetchOrders()
     } catch (error) {
       toast({
@@ -348,7 +348,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
             ✕
           </Button>
         </div>
-        
+
         {!isSupabaseConfigured && (
           <div className="mx-6 mb-4 p-4 bg-amber-500/20 border border-amber-500/30 rounded-lg">
             <div className="flex items-center space-x-2">
@@ -356,7 +356,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
               <span className="text-amber-400 font-semibold">Demo Mode</span>
             </div>
             <p className="text-amber-300 text-sm mt-1">
-              Supabase is not configured. Using mock data for demonstration. 
+              Supabase is not configured. Using mock data for demonstration.
               Configure Supabase environment variables to enable full functionality.
             </p>
           </div>
@@ -400,7 +400,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                           <Input
                             id="name"
                             value={productForm.name}
-                            onChange={(e) => setProductForm({...productForm, name: e.target.value})}
+                            onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
                             className="bg-slate-800 border-amber-500/30"
                             required
                           />
@@ -410,17 +410,17 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                           <Input
                             id="name_am"
                             value={productForm.name_am}
-                            onChange={(e) => setProductForm({...productForm, name_am: e.target.value})}
+                            onChange={(e) => setProductForm({ ...productForm, name_am: e.target.value })}
                             className="bg-slate-800 border-amber-500/30"
                             required
                           />
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="category">Category</Label>
-                          <Select value={productForm.category} onValueChange={(value) => setProductForm({...productForm, category: value})}>
+                          <Select value={productForm.category} onValueChange={(value) => setProductForm({ ...productForm, category: value })}>
                             <SelectTrigger className="bg-slate-800 border-amber-500/30">
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
@@ -438,57 +438,58 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                             id="price"
                             type="number"
                             value={productForm.price}
-                            onChange={(e) => setProductForm({...productForm, price: Number(e.target.value)})}
+                            onChange={(e) => setProductForm({ ...productForm, price: Number(e.target.value) })}
                             className="bg-slate-800 border-amber-500/30"
                             required
                           />
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="image_url">Image URL</Label>
                         <Input
                           id="image_url"
                           value={productForm.image_url}
-                          onChange={(e) => setProductForm({...productForm, image_url: e.target.value})}
+                          onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })}
                           className="bg-slate-800 border-amber-500/30"
                           required
                         />
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="description">Description (English)</Label>
                         <Textarea
                           id="description"
                           value={productForm.description}
-                          onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                          onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                           className="bg-slate-800 border-amber-500/30"
                           rows={3}
                         />
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="description_am">Description (Amharic)</Label>
                         <Textarea
                           id="description_am"
                           value={productForm.description_am}
-                          onChange={(e) => setProductForm({...productForm, description_am: e.target.value})}
+                          onChange={(e) => setProductForm({ ...productForm, description_am: e.target.value })}
                           className="bg-slate-800 border-amber-500/30"
                           rows={3}
                         />
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <input
+                          title="In Stock"
                           type="checkbox"
                           id="in_stock"
                           checked={productForm.in_stock}
-                          onChange={(e) => setProductForm({...productForm, in_stock: e.target.checked})}
+                          onChange={(e) => setProductForm({ ...productForm, in_stock: e.target.checked })}
                           className="rounded"
                         />
                         <Label htmlFor="in_stock">In Stock</Label>
                       </div>
-                      
+
                       <div className="flex justify-end space-x-2">
                         <Button type="button" variant="outline" onClick={() => setShowProductDialog(false)}>
                           Cancel
@@ -501,7 +502,7 @@ export default function AdminPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                   </DialogContent>
                 </Dialog>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((product) => (
                   <Card key={product.id} className="bg-slate-800 border-amber-500/20">

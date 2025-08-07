@@ -16,6 +16,10 @@ import AdminPanel from "@/components/admin-panel"
 import CartSidebar from "@/components/cart-sidebar"
 import ConfigurationBanner from "@/components/configuration-banner"
 
+import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
+
+
 // Supabase client with fallback
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -117,6 +121,8 @@ const translations = {
     },
   },
 }
+
+
 
 export default function RejebFurniture() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -378,94 +384,18 @@ export default function RejebFurniture() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-slate-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-amber-500/20">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 dark:from-amber-400 dark:to-amber-600 bg-clip-text text-transparent">
-                Rejeb Furniture
-              </span>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="#home" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.home}
-              </Link>
-              <Link href="#majlis" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.majlis}
-              </Link>
-              <Link href="#sofas" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.sofas}
-              </Link>
-              <Link href="#beds" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.beds}
-              </Link>
-              <Link href="#curtains" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.curtains}
-              </Link>
-              <Link href="#about" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.about}
-              </Link>
-              <Link href="#contact" className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                {t.nav.contact}
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {/* Cart Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowCart(true)}
-                className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 relative"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {cartItems.length > 0 && (
-                  <Badge className="absolute -top-2 -right-2 bg-amber-500 text-black text-xs">
-                    {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-                  </Badge>
-                )}
-              </Button>
-              
-              {/* Admin Panel Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowAdminPanel(!showAdminPanel)}
-                className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
-              >
-                <Users className="h-5 w-5" />
-              </Button>
-              
-              {!isSupabaseConfigured && (
-                <div className="hidden md:flex items-center">
-                  <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse mr-2"></div>
-                  <span className="text-xs text-amber-600 dark:text-amber-400">Demo</span>
-                </div>
-              )}
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setLanguage(language === "en" ? "am" : "en")}
-                className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
-              >
-                <Globe className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400"
-              >
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar
+        t={t}
+        cartItems={cartItems}
+        setShowCart={setShowCart}
+        showAdminPanel={showAdminPanel}
+        setShowAdminPanel={setShowAdminPanel}
+        isSupabaseConfigured={isSupabaseConfigured}
+        language={language}
+        setLanguage={setLanguage}
+        theme={theme ?? "light"}
+        setTheme={setTheme}
+      />
 
       <ConfigurationBanner isSupabaseConfigured={isSupabaseConfigured} />
 
@@ -537,39 +467,95 @@ export default function RejebFurniture() {
         </div>
       </section>
 
-      {/* Product Categories */}
-      <section className="py-20 bg-gradient-to-b from-slate-50 to-purple-50 dark:from-slate-900 dark:to-purple-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">Our Collections</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto" />
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {productCategories.map((category, index) => (
-              <Card
-                key={index}
-                className="group overflow-hidden bg-white/60 dark:bg-black/40 border-amber-500/20 hover:border-amber-400/50 transition-all duration-300 hover:scale-105"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={category.image || "/placeholder.svg"}
-                    alt={category.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-2xl font-bold text-white mb-1">
-                      {language === "en" ? category.name : category.nameAm}
-                    </h3>
-                    <Badge variant="secondary" className="bg-amber-500/20 text-amber-400 border-amber-400/30">
-                      {category.count}
-                    </Badge>
-                  </div>
-                </div>
-              </Card>
-            ))}
+      {/* Majlis Section */}
+      <section id="majlis" className="py-20 bg-gradient-to-b from-slate-50 to-purple-50 dark:from-slate-900 dark:to-purple-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">Arabian Majlis</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto mb-4" />
+            <p className="text-lg text-slate-600 dark:text-gray-300 max-w-2xl mx-auto">Experience the tradition and luxury of Arabian Majlis seating, perfect for gatherings and hospitality. Our collection features intricate designs and premium materials.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Fallback/placeholder Majlis products */}
+            <Card className="bg-white/60 dark:bg-black/40 border-amber-500/20">
+              <CardContent className="p-6">
+                <Image src="/placeholder.svg?height=300&width=400&text=Majlis+Set" alt="Majlis Set" width={400} height={300} className="rounded mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Royal Majlis Set</h3>
+                <p className="text-slate-600 dark:text-gray-300 mb-2">Luxurious traditional Arabian majlis with gold accents and premium fabrics.</p>
+                <Badge className="bg-amber-500 text-black font-semibold mb-2">25+ Designs</Badge>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold mt-2">View Collection</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Sofas Section */}
+      <section id="sofas" className="py-20 bg-gradient-to-b from-purple-50 to-slate-50 dark:from-purple-900 dark:to-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">Sofas</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto mb-4" />
+            <p className="text-lg text-slate-600 dark:text-gray-300 max-w-2xl mx-auto">Discover our range of elegant sofas, blending comfort and sophistication for your living space. Choose from a variety of styles and finishes.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Fallback/placeholder Sofa products */}
+            <Card className="bg-white/60 dark:bg-black/40 border-amber-500/20">
+              <CardContent className="p-6">
+                <Image src="/placeholder.svg?height=300&width=400&text=Sofa+Collection" alt="Sofa Collection" width={400} height={300} className="rounded mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Golden Sofa Collection</h3>
+                <p className="text-slate-600 dark:text-gray-300 mb-2">Elegant sofa set with golden embroidery and comfortable seating.</p>
+                <Badge className="bg-amber-500 text-black font-semibold mb-2">40+ Designs</Badge>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold mt-2">View Collection</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Beds Section */}
+      <section id="beds" className="py-20 bg-gradient-to-b from-slate-50 to-purple-50 dark:from-slate-900 dark:to-purple-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">Beds</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto mb-4" />
+            <p className="text-lg text-slate-600 dark:text-gray-300 max-w-2xl mx-auto">Sleep like royalty with our majestic bed collections, featuring intricate carvings and luxurious finishes for your bedroom.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Fallback/placeholder Bed products */}
+            <Card className="bg-white/60 dark:bg-black/40 border-amber-500/20">
+              <CardContent className="p-6">
+                <Image src="/placeholder.svg?height=300&width=400&text=Bed+Collection" alt="Bed Collection" width={400} height={300} className="rounded mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Palace Bedroom Set</h3>
+                <p className="text-slate-600 dark:text-gray-300 mb-2">Majestic bedroom furniture fit for royalty with intricate carvings.</p>
+                <Badge className="bg-amber-500 text-black font-semibold mb-2">30+ Designs</Badge>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold mt-2">View Collection</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Curtains Section */}
+      <section id="curtains" className="py-20 bg-gradient-to-b from-purple-50 to-slate-50 dark:from-purple-900 dark:to-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-4">Curtains</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto mb-4" />
+            <p className="text-lg text-slate-600 dark:text-gray-300 max-w-2xl mx-auto">Enhance your interiors with our premium silk curtains, featuring traditional Arabian patterns and exquisite craftsmanship.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Fallback/placeholder Curtain products */}
+            <Card className="bg-white/60 dark:bg-black/40 border-amber-500/20">
+              <CardContent className="p-6">
+                <Image src="/placeholder.svg?height=300&width=400&text=Curtain+Collection" alt="Curtain Collection" width={400} height={300} className="rounded mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Silk Curtain Collection</h3>
+                <p className="text-slate-600 dark:text-gray-300 mb-2">Premium silk curtains with traditional Arabian patterns.</p>
+                <Badge className="bg-amber-500 text-black font-semibold mb-2">50+ Designs</Badge>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold mt-2">View Collection</Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -801,75 +787,7 @@ export default function RejebFurniture() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-100 dark:bg-black border-t border-amber-500/20">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 dark:from-amber-400 dark:to-amber-600 bg-clip-text text-transparent">
-                  Rejeb Furniture
-                </span>
-              </div>
-              <p className="text-slate-600 dark:text-gray-400 mb-4">
-                Crafting luxury furniture with Arabian elegance since 1990. Transform your space into a palace of
-                comfort and style.
-              </p>
-              <div className="flex space-x-4">
-                {[
-                  { icon: "📘", name: "Facebook", url: "https://facebook.com/alfakhir" },
-                  { icon: "📷", name: "Instagram", url: "https://instagram.com/alfakhir" },
-                  { icon: "✈️", name: "Telegram", url: "https://t.me/alfakhir" },
-                  { icon: "🎵", name: "TikTok", url: "https://tiktok.com/@alfakhir" }
-                ].map((social, i) => (
-                  <a
-                    key={i}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center hover:bg-amber-500/30 transition-colors cursor-pointer text-lg"
-                    title={social.name}
-                  >
-                    {social.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-slate-800 dark:text-white font-semibold mb-4">Quick Links</h4>
-              <div className="space-y-2">
-                {["Home", "Collections", "About", "Showrooms", "Contact"].map((link) => (
-                  <Link key={link} href="#" className="block text-slate-600 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                    {link}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-slate-800 dark:text-white font-semibold mb-4">Collections</h4>
-              <div className="space-y-2">
-                {["Majlis", "Sofas", "Beds", "Curtains", "Custom Orders"].map((collection) => (
-                  <Link
-                    key={collection}
-                    href="#"
-                    className="block text-slate-600 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                  >
-                    {collection}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-amber-500/20 mt-8 pt-8 text-center">
-            <p className="text-slate-600 dark:text-gray-400">
-              © {new Date().getFullYear()} Rejeb Furniture. All rights reserved. | Crafted with excellence in Ethiopia
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Admin Panel */}
       <AdminPanel isOpen={showAdminPanel} onClose={() => setShowAdminPanel(false)} />
