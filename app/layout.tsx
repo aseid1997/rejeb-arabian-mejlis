@@ -7,10 +7,10 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Al-Fakhir Furniture - Luxury Arabian Furniture",
+  title: "Rejeb Furniture - Luxury Arabian Mejlis, Beds and Sofas",
   description:
     "Exquisite Arabian furniture collection featuring luxury majlis, sofas, beds, and curtains. Crafting elegance since 1990.",
-    generator: 'v0.dev'
+    generator: ''
 }
 
 export default function RootLayout({

@@ -50,14 +50,14 @@ const translations = {
       newArrivals: "New Arrivals",
       craftsmanship: "Master Craftsmanship",
       inspiration: "Design Inspiration",
-      about: "About Al-Fakhir Furniture",
+      about: "About Rejeb Furniture",
       showrooms: "Our Showrooms",
       contact: "Contact Us",
     },
     about: {
       title: "Three Decades of Excellence",
       description:
-        "Since 1990, Al-Fakhir Furniture has been the epitome of luxury and craftsmanship in Arabian furniture. Our master artisans blend traditional techniques with contemporary design to create pieces that are not just furniture, but works of art that tell stories of heritage and elegance.",
+        "Since 1990, Rejeb Furniture has been the epitome of luxury and craftsmanship in Arabian furniture. Our master artisans blend traditional techniques with contemporary design to create pieces that are not just furniture, but works of art that tell stories of heritage and elegance.",
     },
     contact: {
       name: "Full Name",
@@ -118,13 +118,28 @@ const translations = {
   },
 }
 
-export default function LuxuryFurnitureWebsite() {
+export default function RejebFurniture() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [language, setLanguage] = useState<"en" | "am">("en")
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [products, setProducts] = useState([])
-  const [cartItems, setCartItems] = useState([])
+  type Product = {
+    id: string
+    name: string
+    name_am: string
+    category: string
+    price: number
+    image_url: string
+    description: string
+    description_am: string
+    in_stock: boolean
+    [key: string]: any
+  }
+
+  type CartItem = Product & { quantity: number }
+
+  const [products, setProducts] = useState<Product[]>([])
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showCart, setShowCart] = useState(false)
 
@@ -257,7 +272,7 @@ export default function LuxuryFurnitureWebsite() {
 }
 
   // Add product to cart
-  const addToCart = (product) => {
+  const addToCart = (product: Product) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.id === product.id)
       if (existing) {
@@ -276,7 +291,7 @@ export default function LuxuryFurnitureWebsite() {
   }
 
   // Update cart item quantity
-  const updateCartQuantity = (id, quantity) => {
+  const updateCartQuantity = (id: string, quantity: number) => {
     if (quantity === 0) {
       removeFromCart(id)
       return
@@ -289,7 +304,7 @@ export default function LuxuryFurnitureWebsite() {
   }
 
   // Remove item from cart
-  const removeFromCart = (id) => {
+  const removeFromCart = (id: string) => {
     setCartItems(prev => prev.filter(item => item.id !== id))
   }
 
@@ -299,9 +314,10 @@ export default function LuxuryFurnitureWebsite() {
   }
 
   // Submit contact form with fallback
-const handleContactSubmit = async (e) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault()
-  const formData = new FormData(e.target)
+  const form = e.target as HTMLFormElement
+  const formData = new FormData(form)
   
   const contactData = {
     name: formData.get('name'),
@@ -316,7 +332,7 @@ const handleContactSubmit = async (e) => {
       title: "Message Received (Demo Mode)",
       description: "Thank you for your message! In demo mode, messages are not saved. Please configure Supabase to enable full functionality.",
     })
-    e.target.reset()
+    form.reset()
     return
   }
   
@@ -332,14 +348,14 @@ const handleContactSubmit = async (e) => {
       description: "Thank you for your message. We'll get back to you soon!",
     })
     
-    e.target.reset()
+    form.reset()
   } catch (error) {
     console.error('Error saving contact:', error)
     toast({
       title: "Message Received (Offline Mode)",
       description: "Thank you for your message! There was a connection issue, but we've noted your inquiry.",
     })
-    e.target.reset()
+    form.reset()
   }
 }
 
@@ -369,7 +385,7 @@ const handleContactSubmit = async (e) => {
             <div className="flex items-center space-x-2">
               <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 dark:from-amber-400 dark:to-amber-600 bg-clip-text text-transparent">
-                Al-Fakhir
+                Rejeb Furniture
               </span>
             </div>
 
@@ -510,6 +526,7 @@ const handleContactSubmit = async (e) => {
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {heroSlides.map((_, index) => (
             <button
+            title="Slide Indicator"
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-colors ${
@@ -573,8 +590,8 @@ const handleContactSubmit = async (e) => {
               >
                 <div className="relative h-64 overflow-hidden">
                   <Image
-                    src={item.image_url || "/placeholder.svg"}
-                    alt={item.name}
+                    src={item?.image_url || "/placeholder.svg"}
+                    alt={item?.name}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -791,7 +808,7 @@ const handleContactSubmit = async (e) => {
               <div className="flex items-center space-x-2 mb-4">
                 <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
                 <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 dark:from-amber-400 dark:to-amber-600 bg-clip-text text-transparent">
-                  Al-Fakhir Furniture
+                  Rejeb Furniture
                 </span>
               </div>
               <p className="text-slate-600 dark:text-gray-400 mb-4">
@@ -848,7 +865,7 @@ const handleContactSubmit = async (e) => {
 
           <div className="border-t border-amber-500/20 mt-8 pt-8 text-center">
             <p className="text-slate-600 dark:text-gray-400">
-              © 2024 Al-Fakhir Furniture. All rights reserved. | Crafted with excellence in Ethiopia
+              © {new Date().getFullYear()} Rejeb Furniture. All rights reserved. | Crafted with excellence in Ethiopia
             </p>
           </div>
         </div>
