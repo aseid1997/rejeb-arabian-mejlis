@@ -27,6 +27,8 @@ build/
 # Misc
 *.local
 *.cache
+pnpm-lock.yaml
+.pnpm-store/
 
 # Prevent environment and build files from being committed
 .env
