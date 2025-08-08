@@ -10,119 +10,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, ChevronRight, Moon, Sun, Globe, Star, MapPin, Phone, Mail, Award, Sparkles, Crown, ShoppingCart, Plus, Edit, Trash2, Users, Package } from 'lucide-react'
 import { useTheme } from "next-themes"
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from "@/lib/supabase"
 import { toast } from "@/hooks/use-toast"
 import AdminPanel from "@/components/admin-panel"
 import CartSidebar from "@/components/cart-sidebar"
 import ConfigurationBanner from "@/components/configuration-banner"
-
+import mockProducts, { Product } from "../lib/mockProducts"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 
+import translations from "@/lib/translations";
 
-
-// Supabase client with fallback
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-const supabase = supabaseUrl && supabaseKey 
-  ? createClient(supabaseUrl, supabaseKey)
-  : null
 
 // Check if Supabase is configured
-const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey)
-
-// Language context
-const translations = {
-  en: {
-    nav: {
-      home: "Home",
-      majlis: "Majlis",
-      sofas: "Sofas",
-      beds: "Beds",
-      curtains: "Curtains",
-      about: "About",
-      contact: "Contact",
-    },
-    hero: {
-      title: "Exquisite Arabian Furniture",
-      subtitle: "Crafting Luxury, Defining Elegance",
-      description:
-        "Discover our premium collection of handcrafted Arabian majlis, luxurious sofas, elegant beds, and bespoke curtains that transform your space into a palace of comfort and style.",
-      cta: "Explore Collection",
-    },
-    sections: {
-      newArrivals: "New Arrivals",
-      craftsmanship: "Master Craftsmanship",
-      inspiration: "Design Inspiration",
-      about: "About Rejeb Furniture",
-      showrooms: "Our Showrooms",
-      contact: "Contact Us",
-    },
-    about: {
-      title: "Three Decades of Excellence",
-      description:
-        "Since 1990, Rejeb Furniture has been the epitome of luxury and craftsmanship in Arabian furniture. Our master artisans blend traditional techniques with contemporary design to create pieces that are not just furniture, but works of art that tell stories of heritage and elegance.",
-    },
-    contact: {
-      name: "Full Name",
-      email: "Email Address",
-      message: "Your Message",
-      send: "Send Message",
-      phone: "+251-11-123-4567",
-      email_addr: "info@alfakhir.com",
-      address: "Bole Road, Addis Ababa, Ethiopia",
-    },
-    cart: {
-      addToCart: "Add to Cart",
-      viewCart: "View Cart",
-    },
-  },
-  am: {
-    nav: {
-      home: "ቤት",
-      majlis: "መጅሊስ",
-      sofas: "ሶፋዎች",
-      beds: "አልጋዎች",
-      curtains: "መጋረጃዎች",
-      about: "ስለ እኛ",
-      contact: "ያግኙን",
-    },
-    hero: {
-      title: "የአረብ የቤት እቃዎች",
-      subtitle: "ቅንጦት መፍጠር፣ ውበት መግለጽ",
-      description: "በእጅ የተሰሩ የአረብ መጅሊስ፣ ቅንጦተኛ ሶፋዎች፣ ውብ አልጋዎች እና ልዩ መጋረጃዎችን ያግኙ። የእርስዎን ቦታ ወደ ምቾት እና ዘይቤ ቤተ መንግስት ይለውጡ።",
-      cta: "ስብስብ ይመልከቱ",
-    },
-    sections: {
-      newArrivals: "አዲስ መጤዎች",
-      craftsmanship: "ዋና የእጅ ስራ",
-      inspiration: "የንድፍ መነሳሳት",
-      about: "ስለ አል-ፋኪር የቤት እቃዎች",
-      showrooms: "የእኛ ማሳያ ቤቶች",
-      contact: "ያግኙን",
-    },
-    about: {
-      title: "ሶስት አስርት ዓመታት ብቃት",
-      description:
-        "ከ1990 ጀምሮ አል-ፋኪር የቤት እቃዎች በአረብ የቤት እቃዎች ውስጥ የቅንጦት እና የእጅ ስራ ምሳሌ ሆነዋል። የእኛ ዋና የእጅ ባለሞያዎች ባህላዊ ቴክኒኮችን ከዘመናዊ ንድፍ ጋር በማዋሃድ የቤት እቃዎች ብቻ ሳይሆን የቅርስ እና ውበት ታሪኮችን የሚነግሩ የጥበብ ስራዎችን ይፈጥራሉ።",
-    },
-    contact: {
-      name: "ሙሉ ስም",
-      email: "የኢሜይል አድራሻ",
-      message: "የእርስዎ መልእክት",
-      send: "መልእክት ላክ",
-      phone: "+251-11-123-4567",
-      email_addr: "info@alfakhir.com",
-      address: "ቦሌ መንገድ፣ አዲስ አበባ፣ ኢትዮጵያ",
-    },
-    cart: {
-      addToCart: "ወደ ጋሪ ጨምር",
-      viewCart: "ጋሪ ይመልከቱ",
-    },
-  },
-}
-
+const isSupabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
 
 export default function RejebFurniture() {
@@ -200,81 +101,30 @@ export default function RejebFurniture() {
       image: "/placeholder.svg?height=400&width=600&text=Curtain+Collection",
       count: "50+ Designs",
     },
-  ]
+  ];
+
 
   // Fetch products from Supabase or use fallback data
   const fetchProducts = async () => {
-  if (!isSupabaseConfigured || !supabase) {
-    // Fallback mock data
-    const mockProducts = [
-      {
-        id: '1',
-        name: 'Royal Majlis Set',
-        name_am: 'ንጉሣዊ መጅሊስ ስብስብ',
-        category: 'majlis',
-        price: 125000,
-        image_url: '/placeholder.svg?height=400&width=600&text=Royal+Majlis+Set',
-        description: 'Luxurious traditional Arabian majlis with gold accents and premium fabrics.',
-        description_am: 'በወርቅ ማስዋቢያዎች እና ከፍተኛ ጥራት ያላቸው ጨርቆች የተሰራ ቅንጦተኛ ባህላዊ የአረብ መጅሊስ።',
-        in_stock: true
-      },
-      {
-        id: '2',
-        name: 'Golden Sofa Collection',
-        name_am: 'የወርቅ ሶፋ ስብስብ',
-        category: 'sofas',
-        price: 85000,
-        image_url: '/placeholder.svg?height=400&width=600&text=Golden+Sofa+Collection',
-        description: 'Elegant sofa set with golden embroidery and comfortable seating.',
-        description_am: 'በወርቅ ጥልፍ እና ምቹ መቀመጫ የተሰራ ውብ ሶፋ ስብስብ።',
-        in_stock: true
-      },
-      {
-        id: '3',
-        name: 'Palace Bedroom Set',
-        name_am: 'የቤተ መንግስት የመኝታ ክፍል ስብስብ',
-        category: 'beds',
-        price: 95000,
-        image_url: '/placeholder.svg?height=400&width=600&text=Palace+Bedroom+Set',
-        description: 'Majestic bedroom furniture fit for royalty with intricate carvings.',
-        description_am: 'ውስብስብ ቅርጻ ቅርጾች ያሉት ለንጉሣዊነት የሚመጥን ግርማ ሞገስ ያለው የመኝታ ክፍል እቃ።',
-        in_stock: true
-      },
-      {
-        id: '4',
-        name: 'Silk Curtain Collection',
-        name_am: 'የሐር መጋረጃ ስብስብ',
-        category: 'curtains',
-        price: 35000,
-        image_url: '/placeholder.svg?height=400&width=600&text=Silk+Curtain+Collection',
-        description: 'Premium silk curtains with traditional Arabian patterns.',
-        description_am: 'ባህላዊ የአረብ ንድፎች ያሉት ከፍተኛ ጥራት ያለው የሐር መጋረጃ።',
-        in_stock: true
-      }
-    ]
-    
-    setProducts(mockProducts)
-    return
-  }
+    if (!isSupabaseConfigured) {
+      setProducts(mockProducts)
+      return
+    }
 
   try {
     const { data, error } = await supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false })
-    
     if (error) {
       console.error('Error fetching products:', error)
-      // Use fallback data on error
-      fetchProducts()
+      setProducts(mockProducts)
       return
     }
-    
-    setProducts(data || [])
+    setProducts(data || []);
   } catch (error) {
-    console.error('Supabase connection error:', error)
-    // Use fallback data on connection error
-    fetchProducts()
+    console.error('Supabase connection error:', error);
+    setProducts(mockProducts);
   }
 }
 
@@ -347,14 +197,11 @@ export default function RejebFurniture() {
     const { error } = await supabase
       .from('contacts')
       .insert([contactData])
-    
     if (error) throw error
-    
     toast({
       title: "Message Sent",
       description: "Thank you for your message. We'll get back to you soon!",
     })
-    
     form.reset()
   } catch (error) {
     console.error('Error saving contact:', error)
