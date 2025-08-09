@@ -2,25 +2,23 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { ChevronLeft, ChevronRight, Moon, Sun, Globe, Star, MapPin, Phone, Mail, Award, Sparkles, Crown, ShoppingCart, Plus, Edit, Trash2, Users, Package } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, MapPin, Phone, Mail, Award, Sparkles } from 'lucide-react'
 import { useTheme } from "next-themes"
 import { supabase } from "@/lib/supabase"
 import { toast } from "@/hooks/use-toast"
 import AdminPanel from "@/components/admin-panel"
 import CartSidebar from "@/components/cart-sidebar"
 import ConfigurationBanner from "@/components/configuration-banner"
-import mockProducts, { Product } from "../lib/mockProducts"
+import mockProducts from "../lib/mockProducts"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 
 import translations from "@/lib/translations";
-
 
 // Check if Supabase is configured
 const isSupabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
@@ -104,29 +102,42 @@ export default function RejebFurniture() {
   ];
 
 
-  // Fetch products from Supabase or use fallback data
+  // Fetch products from Supabase (items + categories) or use fallback data
   const fetchProducts = async () => {
     if (!isSupabaseConfigured) {
       setProducts(mockProducts)
       return
     }
 
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (error) {
-      console.error('Error fetching products:', error)
-      setProducts(mockProducts)
-      return
+    try {
+      const { data, error } = await supabase
+        .from('items')
+        .select('id, name, category_id, image_url, description, stock_quantity, created_at, categories(name)')
+        .order('created_at', { ascending: false });
+      if (error) {
+        console.error('Error fetching items:', error?.message || error);
+        setProducts(mockProducts);
+        return;
+      }
+      // Map Supabase data to Product type
+      const mapped = Array.isArray(data)
+        ? data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            category: item.categories?.name || "",
+            image_url: item.image_url,
+            description: item.description,
+            stock_quantity: item.stock_quantity,
+            created_at: item.created_at,
+            ...item,
+          }))
+        : mockProducts;
+      setProducts(mapped);
+    } catch (error: any) {
+      console.error('Supabase connection error:', error?.message || error);
+      setProducts(mockProducts);
     }
-    setProducts(data || []);
-  } catch (error) {
-    console.error('Supabase connection error:', error);
-    setProducts(mockProducts);
   }
-}
 
   // Add product to cart
   const addToCart = (product: Product) => {
@@ -438,7 +449,7 @@ export default function RejebFurniture() {
                     {language === "en" ? item.name : item.name_am}
                   </h3>
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mb-4">
-                    ETB {item.price.toLocaleString()}
+                    ETB {typeof item.price === 'number' ? item.price.toLocaleString() : 'N/A'}
                   </p>
                   <Button
                     onClick={() => addToCart(item)}
